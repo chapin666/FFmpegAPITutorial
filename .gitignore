@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+.DS_Store
 
 # Compiled Object files
 *.slo
@@ -30,6 +31,7 @@
 *.exe
 *.out
 *.app
+
 
 /output
 /cmake-build-debug
