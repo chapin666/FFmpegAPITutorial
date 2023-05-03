@@ -1,3 +1,0 @@
-/Users/chapin666/Source/cpp/FFmpegAPITutorial/output/CMakeFiles/video_encoder.dir
-/Users/chapin666/Source/cpp/FFmpegAPITutorial/output/CMakeFiles/edit_cache.dir
-/Users/chapin666/Source/cpp/FFmpegAPITutorial/output/CMakeFiles/rebuild_cache.dir
