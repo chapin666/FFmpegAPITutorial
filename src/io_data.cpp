@@ -1,5 +1,8 @@
 #include <iostream>
+#include <string>
 #include "io_data.h"
+
+using namespace std;
 
 static FILE *input_file = nullptr;
 static FILE *output_file = nullptr;
@@ -8,7 +11,7 @@ int32_t open_input_output_files(const char *input_name, const char *output_name)
 {
     if (strlen(input_name) == 0 || strlen(output_name) == 0)
     {
-        std::cerr << "Error: empty input or output file name." << std::endl;
+        cerr << "Error: empty input or output file name." << endl;
         return -1;
     }
     close_input_output_files();
@@ -16,14 +19,14 @@ int32_t open_input_output_files(const char *input_name, const char *output_name)
     input_file = fopen(input_name, "rb");
     if (input_file == nullptr)
     {
-        std::cerr << "Error: can't open input file." << std::endl;
+        cerr << "Error: can't open input file." << endl;
         return -1;
     }
 
     output_file = fopen(output_name, "wb");
     if (output_file == nullptr)
     {
-        std::cerr << "Error: can't open output file." << std::endl;
+        cerr << "Error: can't open output file." << endl;
         return -1;
     }
     return 0;
@@ -77,7 +80,7 @@ int32_t read_yuv_to_frame(AVFrame *frame)
 
     if (read_size != frame_size)
     {
-        std::cerr << "Error: Read data error, frame_size: " << frame_size << std::endl;
+        cerr << "Error: Read data error, frame_size: " << frame_size << endl;
         return -1;
     }
     return 0;
@@ -86,4 +89,40 @@ int32_t read_yuv_to_frame(AVFrame *frame)
 void write_pkt_to_file(AVPacket *pkt)
 {
     fwrite(pkt->data, 1, pkt->size, output_file);
+}
+
+int32_t end_of_input_file()
+{
+    return feof(input_file);
+}
+
+int32_t read_data_to_buf(uint8_t *buf, int32_t size, int32_t &out_size)
+{
+    int32_t read_size = fread(buf, 1, size, input_file);
+    if (read_size == 0)
+    {
+        cerr << "Error: read_data_to_buf failed." << endl;
+        return -1;
+    }
+
+    out_size = read_size;
+    return 0;
+}
+
+int32_t write_frame_to_yuv(AVFrame *frame)
+{
+    uint8_t **pBuf = frame->data;
+    int *pStride = frame->linesize;
+    for (size_t i = 0; i < 3; i++)
+    {
+        int32_t width = (i == 0 ? frame->width : frame->width / 2);
+        int32_t height = (i == 0 ? frame->height : frame->height / 2);
+        for (size_t j = 0; j < height; j++)
+        {
+            fwrite(pBuf[i], 1, width, output_file);
+            pBuf[i] += pStride[i];
+        }
+    }
+
+    return 0;
 }

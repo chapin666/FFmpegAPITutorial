@@ -8,6 +8,7 @@ extern "C"
 #include <libavutil/imgutils.h>
 }
 #include <iostream>
+#include <string>
 #include "video_encoder_core.h"
 #include "io_data.h"
 

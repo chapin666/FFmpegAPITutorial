@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "io_data.h"
 #include "video_encoder_core.h"
 
