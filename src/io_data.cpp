@@ -1,5 +1,8 @@
+//
+// Created by chapin666 on 2023/5/2.
+//
+
 #include <iostream>
-#include <string>
 #include "io_data.h"
 
 using namespace std;
@@ -91,6 +94,7 @@ void write_pkt_to_file(AVPacket *pkt)
     fwrite(pkt->data, 1, pkt->size, output_file);
 }
 
+
 int32_t end_of_input_file()
 {
     return feof(input_file);
@@ -125,4 +129,43 @@ int32_t write_frame_to_yuv(AVFrame *frame)
     }
 
     return 0;
+}
+
+
+int32_t read_pcm_to_frame(AVFrame *frame, AVCodecContext *codec_ctx)
+{
+    int data_size = av_get_bytes_per_sample(codec_ctx->sample_fmt);
+    if (data_size < 0)
+    {
+        cerr << "Error: Failed to calculate data size." << endl;
+        return -1;
+    }
+    // 从输入文件中交替读取一个采样值的各个声道的数据，保存到 AVFrame 结构的存储分量中
+    for (int i = 0; i < frame->nb_samples; i++)
+    {
+        for (int ch = 0; ch < codec_ctx->channels; ch++)
+        {
+            fread(frame->data[ch] + data_size * i, 1, data_size, input_file);
+        }
+    }
+
+    return 0;
+}
+
+int32_t write_samples_to_pcm(AVFrame *frame, AVCodecContext *codec_ctx)
+{
+    int data_size = av_get_bytes_per_sample(codec_ctx->sample_fmt);
+    if (data_size < 0)
+    {
+        cerr << "Error: Failed to calculate data size." << endl;
+        return -1;
+    }
+    // 从输入文件中交替读取一个采样值的各个声道的数据，保存到 AVFrame 结构的存储分量中
+    for (int i = 0; i < frame->nb_samples; i++)
+    {
+        for (int ch = 0; ch < codec_ctx->channels; ch++)
+        {
+            fwrite(frame->data[ch] + data_size * i, 1, data_size, output_file);
+        }
+    }
 }

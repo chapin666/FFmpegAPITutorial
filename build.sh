@@ -7,5 +7,6 @@ cd output
 cmake ..
 make
 
-# ./video_encoder
-./video_decoder
+#./video_encoder
+#./video_decoder
+# ./audio_encoder
