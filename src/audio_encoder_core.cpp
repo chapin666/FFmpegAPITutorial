@@ -56,11 +56,13 @@ int32_t init_audio_encoder(const char *codec_name)
     const int sample_rate = 44100;
     const int num_channels = 2;
     const int bit_rate = 64000;
+    codec_ctx->codec_id = audio_codec_id;
+    codec_ctx->codec_type = AVMEDIA_TYPE_AUDIO;
     codec_ctx->bit_rate = bit_rate;               // 输出码率为 64Kbps
     codec_ctx->sample_fmt = AV_SAMPLE_FMT_FLTP; // 采样格式为 planar float
     codec_ctx->sample_rate = sample_rate;             // 采样率为 44100
-    codec_ctx->channels = num_channels;
-    codec_ctx->channel_layout = av_get_default_channel_layout(num_channels); // 双声道
+    codec_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
+    codec_ctx->channels = av_get_channel_layout_nb_channels(codec_ctx->channel_layout);
 
     // 打开音频编码器
     int32_t result = avcodec_open2(codec_ctx, codec, nullptr);
@@ -81,6 +83,7 @@ int32_t init_audio_encoder(const char *codec_name)
     frame->nb_samples = codec_ctx->frame_size;
     frame->format = codec_ctx->sample_fmt;
     frame->channel_layout = codec_ctx->channel_layout;
+    frame->channels = av_get_channel_layout_nb_channels(frame->channel_layout);
 
     result = av_frame_get_buffer(frame, 0);
     if (result < 0)

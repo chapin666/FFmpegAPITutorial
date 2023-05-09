@@ -3,6 +3,8 @@ project(FFmpegAPITutorial LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 include_directories(${PROJECT_SOURCE_DIR}/dep/FFmpeg/include)
 
