@@ -14,7 +14,8 @@ extern "C" {
 
 using namespace std;
 
-const int STREAM_FRAME_RATE = 25;
+#define STREAM_FRAME_RATE 25
+
 static AVFormatContext *video_fmt_ctx = nullptr, *audio_fmt_ctx = nullptr, *output_fmt_ctx = nullptr;
 static AVPacket pkt;
 static int32_t in_video_st_idx = -1, in_audio_st_idx = -1;
@@ -177,7 +178,6 @@ int32_t init_muxer(char *video_input_file, char *audio_input_file, char* output_
 int32_t muxing()
 {
     int32_t result = 0;
-    int64_t prev_video_dts = 0;
     int64_t cur_video_pts = 0, cur_audio_pts = 0;
 
     AVStream *in_video_st = video_fmt_ctx->streams[in_video_st_idx];
@@ -213,10 +213,10 @@ int32_t muxing()
             if (pkt.pts == AV_NOPTS_VALUE)
             {
                 int64_t frame_duration = (double)AV_TIME_BASE / av_q2d(in_video_st->r_frame_rate);
-                pkt.duration = (double)frame_duration / (double)av_q2d(in_video_st->time_base) * AV_TIME_BASE;
+                pkt.duration = (double)frame_duration / (double)(av_q2d(in_video_st->time_base) * AV_TIME_BASE);
                 pkt.pts = (double)(video_frame_idx * pkt.duration) / (double)(av_q2d(in_video_st->time_base) * AV_TIME_BASE);
                 pkt.dts = pkt.dts;
-                cout << "frame_duration:" << frame_duration << " ,pkt.duration" << pkt.duration << " ,pkt.pts:" << pkt.pts << endl;
+                cout << "frame_duration:" << frame_duration << " ,pkt.duration:" << pkt.duration << " ,pkt.pts:" << pkt.pts << endl;
             }
 
             video_frame_idx++;
@@ -234,7 +234,7 @@ int32_t muxing()
                 break;
             }
             cur_video_pts = pkt.pts;
-            pkt.stream_index = out_video_st_idx;
+            pkt.stream_index = out_audio_st_idx;
             output_stream = output_fmt_ctx->streams[out_audio_st_idx];
         }
 

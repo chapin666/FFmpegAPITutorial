@@ -8,7 +8,7 @@ using namespace std;
 
 static void usage(const char *program_name)
 {
-    cout << "usage: " << string(program_name) << " input_file output_video_file output_audio_file " << endl;
+    cout << "usage: " << string(program_name) << " input_video_file input_audio_file output_file " << endl;
 }
 
 int main(int argc, char **argv)
@@ -19,20 +19,17 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    int32_t result = 0;
-    do {
-        result = init_muxer(argv[1], argv[2], argv[3]);
-        if (result < 0)
-        {
-            break;
-        }
+    int32_t result = init_muxer(argv[1], argv[2], argv[3]);
+    if (result < 0)
+    {
+        cerr << "Error: failed to init muxer." << endl;
+    }
 
-        result = muxing();
-        if (result < 0)
-        {
-            break;
-        }
-    } while (0);
+    result = muxing();
+    if (result < 0)
+    {
+        cerr << "Error: failed to muxing." << endl;
+    }
 
     destroy_muxer();
 

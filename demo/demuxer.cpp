@@ -19,14 +19,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    do {
-        int32_t result = init_demuxer(argv[1], argv[2], argv[3]);
-        if (result < 0)
-        {
-            break;
-        }
-        result = demuxing(argv[2], argv[3]);
-    } while(0);
+    int32_t result = init_demuxer(argv[1], argv[2], argv[3]);
+    if (result < 0) {
+        cerr << "Error: failed to init demuxer." << endl;
+    }
+
+    result = demuxing(argv[2], argv[3]);
+    if (result < 0) {
+        cerr << "Error: failed to demuxing." << endl;
+    }
 
     destroy_demuxer();
 
